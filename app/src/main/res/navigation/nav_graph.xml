@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/sendFragment">
+
+    <fragment
+        android:id="@+id/sendFragment"
+        android:name="ir.moodz.sampleproject.feature_sms.presentation.send_sms.SendFragment"
+        android:label="fragment_send"
+        tools:layout="@layout/fragment_send">
+        <action
+            android:id="@+id/action_sendFragment_to_receiveFragment"
+            app:destination="@id/receiveFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/receiveFragment"
+        android:name="ir.moodz.sampleproject.feature_sms.presentation.recevie_sms.ReceiveFragment"
+        android:label="fragment_receive"
+        tools:layout="@layout/fragment_receive">
+        <action
+            android:id="@+id/action_receiveFragment_to_sendFragment"
+            app:destination="@id/sendFragment" />
+    </fragment>
+
+</navigation>
