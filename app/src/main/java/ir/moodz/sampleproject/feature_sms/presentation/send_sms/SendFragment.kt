@@ -18,7 +18,7 @@ import ir.moodz.sampleproject.ui_utils.BindingFragment
 @AndroidEntryPoint
 class SendFragment : BindingFragment<FragmentSendBinding>() {
 
-    private val smsViewModel : SmsViewModel by viewModels()
+    private val sendSmsViewModel : SendSmsViewModel by viewModels()
 
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentSendBinding::inflate
@@ -30,12 +30,12 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
         requireActivity().requestPermissions(arrayOf(Manifest.permission.SEND_SMS), 0)
 
 
-        smsViewModel.smsStatus.observe(viewLifecycleOwner) {status ->
+        sendSmsViewModel.smsStatus.observe(viewLifecycleOwner) { status ->
 
             when (status) {
 
-                is SmsViewModel.SmsStatus.Sending -> binding.progressBar.isVisible = true
-                is SmsViewModel.SmsStatus.Error -> {
+                is SendSmsViewModel.SmsStatus.Sending -> binding.progressBar.isVisible = true
+                is SendSmsViewModel.SmsStatus.Error -> {
                     Toast.makeText(
                         requireContext(),
                         status.error,
@@ -43,7 +43,7 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
                     ).show()
                     binding.progressBar.isVisible = false
                 }
-                is SmsViewModel.SmsStatus.Sent -> {
+                is SendSmsViewModel.SmsStatus.Sent -> {
                     Toast.makeText(
                         requireContext(),
                         R.string.message_sent,
@@ -65,9 +65,10 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
 
             if (requireActivity().checkSelfPermission(Manifest.permission.SEND_SMS) == PERMISSION_GRANTED){
 
-                smsViewModel.sendSMS(
+                sendSmsViewModel.sendSMS(
                     binding.edtMessage.text.toString(),
                     binding.edtPhone.text.toString()
+
                 )
 
             }

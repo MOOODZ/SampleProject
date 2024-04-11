@@ -50,11 +50,15 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.play.services.auth.api.phone)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation (libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     ksp (libs.androidx.hilt.compiler)
+
+    implementation (libs.accompanist.permissions)
+
 
 }

@@ -13,7 +13,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
-class SmsViewModel @Inject constructor(
+class SendSmsViewModel @Inject constructor(
     private val smsManager: SmsManager
 ) : ViewModel() {
 
@@ -25,7 +25,6 @@ class SmsViewModel @Inject constructor(
         data object Sending: SmsStatus()
         data object Sent: SmsStatus()
         data class Error (val error: String) : SmsStatus()
-
     }
 
     fun sendSMS(message:String , number: String){
