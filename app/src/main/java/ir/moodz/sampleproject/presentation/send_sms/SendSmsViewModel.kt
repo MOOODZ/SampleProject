@@ -1,4 +1,4 @@
-package ir.moodz.sampleproject.feature_sms.presentation.send_sms
+package ir.moodz.sampleproject.presentation.send_sms
 
 import android.telephony.SmsManager
 import androidx.lifecycle.LiveData

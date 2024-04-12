@@ -1,4 +1,4 @@
-package ir.moodz.sampleproject.feature_sms.presentation.send_sms
+package ir.moodz.sampleproject.presentation.send_sms
 
 import android.Manifest
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -13,7 +13,7 @@ import androidx.viewbinding.ViewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import ir.moodz.sampleproject.R
 import ir.moodz.sampleproject.databinding.FragmentSendBinding
-import ir.moodz.sampleproject.ui_utils.BindingFragment
+import ir.moodz.sampleproject.util.BindingFragment
 
 @AndroidEntryPoint
 class SendFragment : BindingFragment<FragmentSendBinding>() {
@@ -27,7 +27,13 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        requireActivity().requestPermissions(arrayOf(Manifest.permission.SEND_SMS), 0)
+        requireActivity().requestPermissions(
+            arrayOf(
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.READ_SMS
+                ),
+            0
+        )
 
 
         sendSmsViewModel.smsStatus.observe(viewLifecycleOwner) { status ->

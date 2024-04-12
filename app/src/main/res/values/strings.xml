@@ -12,4 +12,6 @@
     <string name="submit_number_for_receving_sms">Submit Number For Receving SMS</string>
     <string name="submit">Submit</string>
     <string name="error">Error</string>
+    <string name="number_is">Number: %s</string>
+    <string name="number_submitted">Submitted</string>
 </resources>
