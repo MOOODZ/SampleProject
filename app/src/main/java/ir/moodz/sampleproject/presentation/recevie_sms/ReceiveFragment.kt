@@ -80,12 +80,13 @@ class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
     }
     suspend fun playSong(){
 
-        val mediaPlayer = MediaPlayer.create(context, R.raw.song)
-        mediaPlayer.isLooping = false
-        mediaPlayer.start()
-        delay(15.seconds)
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        MediaPlayer.create(context, R.raw.song).apply {
+            isLooping = false
+            start()
+            delay(15.seconds)
+            stop()
+            release()
+        }
 
     }
 
