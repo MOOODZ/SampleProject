@@ -6,7 +6,7 @@
         android:name="android.hardware.telephony"
         android:required="true" />
     <uses-permission android:name="android.permission.SEND_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <application
         android:name=".SampleProject"
@@ -28,6 +28,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".data.receiver.SmsBroadcastReceiver" />
+
     </application>
 
 </manifest>

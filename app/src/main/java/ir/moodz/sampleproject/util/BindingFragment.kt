@@ -1,4 +1,4 @@
-package ir.moodz.sampleproject.ui_utils
+package ir.moodz.sampleproject.util
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/sendFragment"
-        android:name="ir.moodz.sampleproject.feature_sms.presentation.send_sms.SendFragment"
+        android:name="ir.moodz.sampleproject.presentation.send_sms.SendFragment"
         android:label="fragment_send"
         tools:layout="@layout/fragment_send">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/receiveFragment"
-        android:name="ir.moodz.sampleproject.feature_sms.presentation.recevie_sms.ReceiveFragment"
+        android:name="ir.moodz.sampleproject.presentation.recevie_sms.ReceiveFragment"
         android:label="fragment_receive"
         tools:layout="@layout/fragment_receive">
         <action
