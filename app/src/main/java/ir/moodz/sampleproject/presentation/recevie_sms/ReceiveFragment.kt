@@ -1,52 +1,50 @@
 package ir.moodz.sampleproject.presentation.recevie_sms
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.telephony.TelephonyManager
+import android.provider.Telephony
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.viewbinding.ViewBinding
 import ir.moodz.sampleproject.R
-import ir.moodz.sampleproject.data.repository.SmsListener
+import ir.moodz.sampleproject.data.receiver.SmsBroadcastReceiver
 import ir.moodz.sampleproject.databinding.FragmentReceiveBinding
 import ir.moodz.sampleproject.util.BindingFragment
 import ir.moodz.sampleproject.util.SharedPreferences
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentReceiveBinding::inflate
 
-    private var receiver: SmsListener? = null
-    val filter = IntentFilter("android.provider.Telephony.SMS_RECEIVED")
+    private var smsBroadcastReceiver: SmsBroadcastReceiver? = null
+    private val filter = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
 
-    companion object{
-        const val SUBMITTED_NUMBER = "number"
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
 
-
-
-        var submittedNumber by SharedPreferences (
+        // For saving the number locally
+        var submittedNumber by SharedPreferences(
             requireContext(),
             SUBMITTED_NUMBER
         )
-
         binding.btnSubmit.setOnClickListener {
 
             val inputNumber = binding.edtNumber.text
-            if (inputNumber.isBlank() || inputNumber.length < 11){
+            if (inputNumber.isBlank() || inputNumber.length < 11) {
                 return@setOnClickListener
             }
-            submittedNumber = inputNumber.toString()
+
+            submittedNumber = inputNumber.replaceFirst(Regex("\\d"), "+98")
             Toast.makeText(
                 requireContext(),
                 R.string.number_submitted,
@@ -55,90 +53,55 @@ class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
 
         }
 
+        // For receiving the SMS
+        smsBroadcastReceiver = SmsBroadcastReceiver()
+        val listener = object : SmsBroadcastReceiver.Listener {
 
-        receiver = SmsListener()
-        receiver!!.receivedMessageLiveData.observe(viewLifecycleOwner){ result ->
+            override fun onTextReceived(text: SmsBroadcastReceiver.SmsDetail) {
 
-            AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.number_is , result.senderNumber))
-                .setMessage(result.body)
-                .show()
-            println(
-                "Result is $result"
-            )
+                if (text.number == submittedNumber){
 
-        }
+                    AlertDialog.Builder(requireContext())
+                        .setTitle(getString(R.string.number_is, text.number))
+                        .setMessage(text.message)
+                        .show()
 
-        /*val readSmsPermissionIsGranted = requireActivity().
-        checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
-        if (readSmsPermissionIsGranted) {
-            readMessages(requireContext())?.let { lastMessage ->
+                    CoroutineScope(Dispatchers.Main).launch {
+                        playSong()
+                    }
 
-                AlertDialog.Builder(requireContext())
-                    .setTitle(getString(R.string.number_is , lastMessage.phoneNumber))
-                    .setMessage(lastMessage.message)
-                    .show()
 
+                }
             }
+        }
+        smsBroadcastReceiver!!.setListener(listener)
 
-        }else{
 
-            Toast.makeText(
-                requireContext(),
-                "Permission not granted",
-                Toast.LENGTH_SHORT
-            ).show()
-        }*/
+    }
+    suspend fun playSong(){
 
+        val mediaPlayer = MediaPlayer.create(context, R.raw.song)
+        mediaPlayer.isLooping = false
+        mediaPlayer.start()
+        delay(15.seconds)
+        mediaPlayer.stop()
+        mediaPlayer.release()
 
     }
 
     override fun onStart() {
         super.onStart()
-        requireActivity().registerReceiver(receiver, filter)
+        requireActivity().registerReceiver(smsBroadcastReceiver, filter)
     }
 
     override fun onStop() {
         super.onStop()
-        requireActivity().unregisterReceiver(receiver)
-    }
-    data class MessageDetail(
-        val phoneNumber:String,
-        val message:String
-    )
-
-    private fun readMessages(context: Context): MessageDetail? {
-        val selection = "type = ?"
-        val selectionArgs = arrayOf("2")
-        val sortOrder = "body DESC LIMIT 1"
-
-        val cursor = context.contentResolver.query(
-            Uri.parse("content://sms"),
-            null,
-            selection,
-            selectionArgs,
-            sortOrder
-        )
-
-        return cursor?.use {
-            if (it.moveToFirst()) {
-                val indexMessage = it.getColumnIndex("body")
-                val indexSender = it.getColumnIndex("address")
-                MessageDetail(
-                    phoneNumber = it.getString(indexSender),
-                    message = it.getString(indexMessage)
-                )
-            } else {
-                null
-            }
-
-
-        }
-
-
+        requireActivity().unregisterReceiver(smsBroadcastReceiver)
     }
 
-
+    companion object {
+        const val SUBMITTED_NUMBER = "number"
+    }
 
 
 }

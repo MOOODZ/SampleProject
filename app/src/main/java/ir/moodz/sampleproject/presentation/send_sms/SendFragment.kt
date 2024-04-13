@@ -26,16 +26,15 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         requireActivity().requestPermissions(
             arrayOf(
                 Manifest.permission.SEND_SMS,
-                Manifest.permission.READ_SMS
+                Manifest.permission.RECEIVE_SMS
                 ),
             0
         )
 
-
+        // Showing the sending result
         sendSmsViewModel.smsStatus.observe(viewLifecycleOwner) { status ->
 
             when (status) {
