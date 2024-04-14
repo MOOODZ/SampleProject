@@ -2,10 +2,12 @@ package ir.moodz.sampleproject.presentation.send_sms
 
 import android.Manifest
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -23,13 +25,15 @@ class SendFragment : BindingFragment<FragmentSendBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentSendBinding::inflate
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         requireActivity().requestPermissions(
             arrayOf(
                 Manifest.permission.SEND_SMS,
-                Manifest.permission.RECEIVE_SMS
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.POST_NOTIFICATIONS
                 ),
             0
         )

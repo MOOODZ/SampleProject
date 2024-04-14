@@ -8,10 +8,12 @@ import android.provider.Telephony
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import androidx.viewbinding.ViewBinding
 import ir.moodz.sampleproject.R
 import ir.moodz.sampleproject.data.receiver.SmsBroadcastReceiver
 import ir.moodz.sampleproject.databinding.FragmentReceiveBinding
+import ir.moodz.sampleproject.sendNotification
 import ir.moodz.sampleproject.util.BindingFragment
 import ir.moodz.sampleproject.util.SharedPreferences
 import kotlinx.coroutines.CoroutineScope
@@ -24,8 +26,6 @@ class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
     override val bindingInflater: (LayoutInflater) -> ViewBinding
         get() = FragmentReceiveBinding::inflate
 
-    private var smsBroadcastReceiver: SmsBroadcastReceiver? = null
-    private val filter = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
         // For saving the number locally
         var submittedNumber by SharedPreferences(
             requireContext(),
-            SUBMITTED_NUMBER
+            "number"
         )
         binding.btnSubmit.setOnClickListener {
 
@@ -53,56 +53,8 @@ class ReceiveFragment : BindingFragment<FragmentReceiveBinding>() {
 
         }
 
-        // For receiving the SMS
-        smsBroadcastReceiver = SmsBroadcastReceiver()
-        val listener = object : SmsBroadcastReceiver.Listener {
-
-            override fun onTextReceived(text: SmsBroadcastReceiver.SmsDetail) {
-
-                if (text.number == submittedNumber){
-
-                    AlertDialog.Builder(requireContext())
-                        .setTitle(getString(R.string.number_is, text.number))
-                        .setMessage(text.message)
-                        .show()
-
-                    CoroutineScope(Dispatchers.Main).launch {
-                        playSong()
-                    }
-
-
-                }
-            }
-        }
-        smsBroadcastReceiver!!.setListener(listener)
-
-
-    }
-    suspend fun playSong(){
-
-        MediaPlayer.create(context, R.raw.song).apply {
-            isLooping = false
-            start()
-            delay(15.seconds)
-            stop()
-            release()
-        }
-
     }
 
-    override fun onStart() {
-        super.onStart()
-        requireActivity().registerReceiver(smsBroadcastReceiver, filter)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        requireActivity().unregisterReceiver(smsBroadcastReceiver)
-    }
-
-    companion object {
-        const val SUBMITTED_NUMBER = "number"
-    }
 
 
 }
